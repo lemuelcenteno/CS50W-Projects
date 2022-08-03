@@ -1,0 +1,226 @@
+{% extends "school/layout.html" %}
+{% load static %}
+
+{% block script %}
+    {% if user.is_authenticated %}
+        <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+        {% if user.role == 'STU' %}
+            <script src="{% static 'school/course_detail_student.js' %}"></script>
+        {% else %}
+            <script src="{% static 'school/course_detail_teacher.js' %}"></script>
+        {% endif%}
+    {% endif %}
+{% endblock %}
+
+{% block search %}
+    <form class="d-flex" action="{% url 'search' %}">
+        <input class="form-control me-2" type="search" name="q" placeholder="Search for Courses" aria-label="Search">
+        <button class="btn btn-outline-light" type="submit">Search</button>
+    </form>
+{% endblock %}
+
+{% block body %}
+    <div id="course-hdr">
+        <h1 class="h2"><span class="accent">{{ course.code }}</span>: {{ course.title }}</h1>
+        {% if user.is_authenticated %}
+            {% if user.role == "STU" %}
+                {% if user not in course.students.all %}
+                    <button id="btn-enroll-modal" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-confirm">Enroll</button>
+                {% else %}
+                    <button id="btn-enroll-modal" class="btn btn-danger"  data-bs-toggle="modal" data-bs-target="#modal-confirm">Unenroll</button>
+                {% endif %}
+                <!-- Enrollment Confirmation Modal -->
+                <div class="modal fade" id="modal-confirm" tabindex="-1" role="dialog" aria-labelledby="modalConfirmLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalConfirmLabel"> 
+                                    {% if user not in course.students.all %}
+                                        Enrollment
+                                    {% else %}
+                                        Unenrollment
+                                    {% endif %}
+                                    Confirmation
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to
+                                {% if user not in course.students.all %}
+                                    enroll?
+                                {% else %}
+                                    unenroll?
+                                {% endif %}
+                            </div>
+                            <div class="modal-footer">
+                                {% csrf_token %}
+                                <button 
+                                    id="btn-enroll-toggle" data-code="{{course.code}}"
+                                    type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                                >
+                                    Yes, 
+                                    {% if user not in course.students.all %}
+                                        Enroll
+                                    {% else %}
+                                        Unenroll
+                                    {% endif %} 
+                                    me.
+                                </button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Wait, let me think.</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                {% if user == course.teacher %}
+                    <button  
+                        id="btn-delete-modal" class="btn btn-danger" 
+                        data-bs-toggle="modal" data-bs-target="#modal-delete"
+                    >
+                        Delete Course
+                    </button>
+
+                    <!-- Confirm Course Deletion Modal -->
+                    <div class="modal fade" id="modal-delete" tabindex="-1" role="dialog" aria-labelledby="modalDeleteLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modalDeleteLabel"> 
+                                        Confirm Course Deletion
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Are you sure you want to <strong class="text-danger">DELETE</strong> this course?
+                                </div>
+                                <div class="modal-footer">
+                                    {% csrf_token %}
+                                    <button
+                                        onclick="location.href='{% url 'course-delete' course.code %}'"
+                                        id="btn-delete-course" data-code="{{course.code}}"
+                                        type="button" class="btn btn-danger"
+                                    >
+                                        Yes, delete the course.
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Wait, take me back.</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
+        {% endif %}
+    </div>
+    <hr>
+    <table>
+        <tr>
+            <td><strong>Created on</strong></td>
+            <td>{{ course.timestamp }}</td>
+        </tr>
+        <tr>
+            <td><strong>Teacher</strong></td>
+            <td>{{ course.teacher.username }}</td>
+        </tr>
+        <tr>
+            <td><strong>Enrolled Students</strong></td>
+            <td><span id="student-count">{{ course.students.all.count }}</span></td>
+        </tr>
+    </table>
+
+    <hr>
+
+    {% if user.is_authenticated %}
+    
+        {% if user.role == 'TEA' %}
+            {% if user == course.teacher %}
+                <form id="form-grades" action="{% url 'course-teacher-api' course.code %}" method="post">
+                    {% csrf_token %}
+
+                    <div id="ungraded-container">
+                        <div class="grades-hdr">
+                            <h1 class="h4 accent">Ungraded Students</h1>
+                            {% if ungraded %}
+                                <button type="button" id="btn-submit-grades" class="btn btn-primary">Submit Grades</button>
+                            {% endif %}
+                        </div>
+                        <table id="ungraded-table" class="table table-bordered">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th scope="col">Student</th>
+                                    <th scope="col">Grade</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for gradebook in ungraded %}
+                                    <tr>
+                                        <td>{{ gradebook.student.username }}</td>
+                                        <td class="no-grade" data-gradebook="{{gradebook.id}}">
+                                            No grade yet.
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="2">No ungraded students.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        <table>
+                        <div class="btn-save-container">
+                            <button id="btn-save-grades" type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </div>
+
+                    <div id="graded-container">
+                        <div class="grades-hdr">
+                            <h1 class="h4 accent">Graded Students</h1>
+                            {% if graded %}
+                                <button type="button" id="btn-edit-grades" class="btn btn-primary">Edit Grades</button>
+                            {% endif %}
+                        </div>
+                        <table id="graded-table" class="table table-bordered">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th scope="col">Student</th>
+                                    <th scope="col">Grade</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for gradebook in graded %}
+                                    <tr>
+                                        <td>{{ gradebook.student.username }}</td>
+                                        <td class="with-grade" data-gradebook="{{gradebook.id}}">
+                                            {{ gradebook.grade }}
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="2">No graded students.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        <table>
+                        <div class="btn-save-container">
+                            <button id="btn-save-edits" type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </div>
+
+                </form>
+            {% endif %}
+        {% else %}
+            <div id="student-grade-container">
+                <h1 class="h4">
+                    Your Grade:
+                    <span id="student-grade-score" class="accent">
+                        {% if grade %}
+                            {{ grade }}
+                        {% else %}
+                            *Ungraded*
+                        {% endif %}
+                    </span>
+                </h1>
+            </div>
+        {% endif %}
+
+    {% endif %}
+
+{% endblock %}

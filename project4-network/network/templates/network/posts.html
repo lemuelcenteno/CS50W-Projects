@@ -1,0 +1,75 @@
+{% extends 'network/layout.html' %}
+{% load static %}
+
+{% block script %}
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+    <script src="https://kit.fontawesome.com/697f4fb026.js" crossorigin="anonymous"></script>
+    <script src="{% static 'network/posts.js' %}"></script>
+{% endblock %}
+
+{% block posts %}
+
+    <!-- Posts -->
+    <div id="posts-container">
+        <h1 id="hdr-posts-container">Posts</h1>
+        {% for post in page_obj %}
+            <div class="post">
+                
+                {% if user == post.user %}
+                    <button id="edit-post-{{post.id}}" data-post="{{post.id}}" class='btn-edit btn btn-dark btn-sm'>Edit</button>
+                {% endif %}
+
+                <div class="post-user">
+                    <a href={% url 'profile' post.user.username %}>{{ post.user }}</a>
+                </div>
+
+                <div class='timestamp'>{{post.timestamp}}</div>
+
+                <div class="post-content" id="post-{{post.id}}-content">
+                    {{ post.text }}
+                </div>
+                
+                <div class="like-container" id="like-container-post-{{post.id}}">
+                    {% if user.is_authenticated %}
+                        {% if user not in post.likes.all %}
+                            <i data-post="{{post.id}}" class="btn-like-toggle far fa-heart"></i>
+                        {% else %}
+                            <i data-post="{{post.id}}" class="btn-like-toggle fas fa-heart"></i>
+                        {% endif %}
+                    {% else %}
+                        <a href="{% url 'login' %}"><i class="far fa-heart"></i></a>
+                    {% endif %} 
+                    <span id="post-{{post.id}}-likes">{{ post.likes.count }}</span>
+                </div>
+
+            </div>
+        {% empty %}
+            <div class="post">There are no posts yet.</div>
+        {% endfor%}
+
+        <!-- Pagination Links -->
+        <!-- Based from django documentation -->
+        <div class="pagination">
+            <div class="step-links">
+                <div class="prev">
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1">&laquo; first</a>
+                        <a href="?page={{ page_obj.previous_page_number }}">prev</a>
+                    {% endif %}
+                </div>
+        
+                <div class="current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                </div>
+        
+                <div class="next">
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}">next</a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

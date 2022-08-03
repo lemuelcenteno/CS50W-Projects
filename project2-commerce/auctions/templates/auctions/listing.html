@@ -1,0 +1,109 @@
+{% extends "auctions/layout.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    {% if listing %}
+        {{ listing.title }}
+    {% else %}
+        Not Found
+    {% endif %}
+{% endblock%}
+
+{% block body %}
+    {% if listing %}
+
+        <h2>{{ listing.title }}</h2>
+
+        {% if user.is_authenticated %}
+            {% if in_user_watchlist %}
+                <div><a href="{% url 'remove-watchlist' listing.id %}">Remove from Watchlist</a><div>
+            {% else %}
+                <div><a href="{% url 'add-watchlist' listing.id %}">Add to Watchlist</a><div>
+            {% endif %}
+
+            {% if request.user == listing.owner and listing.active %}
+                <div><a href="{% url 'close-auction' listing.id %}">Close Auction</a></div>
+            {% endif%}
+        {% endif %}
+
+        {% if listing.image_url %}
+            <br />
+            <img src="{{ listing.image_url }}">
+        {% endif %}
+        
+        <br />
+        <h4>Description</h4>
+        <p>{{ listing.description }}</p>
+
+        <h4>Details</h4>
+        <ul>
+            <li>
+                Auctioned by
+                {% if request.user == listing.owner %}
+                    <span class="username-text">{{ listing.owner }} (You)</span>
+                {% else %}
+                    <span class="username-text">{{ listing.owner }}</span>
+                {% endif %}
+            </li>
+            <li>Created - <span class="date-text">{{ listing.created|date:"M d, Y, h:i a" }}</span></li>
+        <ul>
+
+        <br />
+        {% if listing.max_bid %}
+            <h3>₱{{ listing.max_bid }}</h3>
+        {% else %}
+            <h3>₱{{ listing.starting_bid }} <span class="st-bid-txt">(Min. Starting Bid)<span></h3>
+        {% endif %}
+        
+        {% if listing.active %}
+            <p>{{ bids_len }} bids so far.
+                {% if user_highest_bid %}
+                    <span>Your bid is the current bid.</span>
+                {% endif %}
+            </p>
+        {% else %}
+            {% if user_highest_bid %}
+                <br>
+                <h4 class="winner-text">Congrats, you won this auction!</h3>
+            {% endif %}
+        {% endif %}
+
+        {% if user.is_authenticated and request.user != listing.owner and listing.active %}
+            <form action="{% url 'bid' listing.id %}" method="post">
+                {% csrf_token %}
+                {{ bid_form|crispy }}
+                {% for message in messages %}
+                    <p class="error-text"><strong>{{ message }}</strong></p>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary">Place Bid</button>
+            </form>
+        {% endif %}
+
+    {% else %}
+        <p>Sorry, we did not find any listing with that id number.</p>
+    {% endif %}
+
+    <hr>
+
+    <h4>Comments</h4>
+
+    
+    {% for comment in listing.comments.all %}
+        <div class="comment">
+            <span class="username-text">{{ comment.user }} (You)</span>
+            <hr class="comment-divider" />
+            <div>{{ comment.text }}</div>
+        </div>
+    {% empty %}
+        <p>There are no comments yet.</p>
+    {% endfor %}
+    {% if user.is_authenticated %}
+        <form action="{% url 'comment' listing.id %}" method="post">
+            <h5>Add a comment</h5>
+            {% csrf_token %}
+            {{ comment_form|crispy }}
+            <button type="submit" class="btn btn-primary">Comment</button>
+        </form>
+    {% endif%}
+
+{% endblock %}

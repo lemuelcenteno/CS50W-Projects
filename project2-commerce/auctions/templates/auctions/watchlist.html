@@ -1,0 +1,39 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}
+    {{ request.user }} | Watchlist
+{% endblock %}
+
+{% block body %}
+    <h2>Watchlist</h2>
+
+    {% for listing in watchlist_listings %}
+        <a class="listing" href="{% url "listing" listing.id %}">
+            <div class="listing">
+                <h3 class="listing-title">{{ listing.title }}</h3>
+                <p>{{ listing.description }}</p>
+
+                {% if listing.max_bid %}
+                    <h3>₱{{ listing.max_bid }}</h3>
+                {% else %}
+                    <h3>₱{{ listing.starting_bid }} <span class="st-bid-txt">(Min. Starting Bid)<span></h3>
+                {% endif %}
+
+                {% if listing.image_url %}
+                    <img src="{{ listing.image_url }}">
+                {% endif %}
+
+                <p>Auctioned by
+                    {% if request.user == listing.owner %}
+                        <span class="username-text">{{ listing.owner }} (You)</span>
+                    {% else %}
+                        <span class="username-text">{{ listing.owner }}</span>
+                    {% endif %}
+                <p>
+            </div>
+        </a>
+    {% empty %}
+        <div>You currently have no listings in your watchlist.</div>
+    {% endfor %}
+    
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'network/posts.html' %}
+{% load static %}
+
+{% block title %}
+    {{user.username}} | Profile
+{% endblock %}
+
+{% block script %}
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+    <script src="https://kit.fontawesome.com/697f4fb026.js" crossorigin="anonymous"></script>
+    <script src="{% static 'network/posts.js' %}"></script>
+    <script src="{% static 'network/follow.js' %}"></script>
+{% endblock %}
+
+{% block body %}
+
+    <div id="profile-details-container">
+        <div id="profile-head">
+            <h1 class="profile-username">{{ profile_user.username }}</h1>
+            {% if user.is_authenticated %}
+                {% if user != profile_user %}
+                    {% csrf_token %}
+                        {% if user not in profile_user.followers.all %}
+                            <button data-followuser="{{profile_user.username}}" class='btn-follow-toggle btn btn-primary btn-sm'>Follow</button>
+                        {% else %}
+                            <button data-followuser="{{profile_user.username}}" class='btn-follow-toggle btn btn-primary btn-sm'>Unfollow</button>
+                        {% endif%}
+                    </button>
+                {% endif %}
+            {% endif %}
+        </div>
+        <div id="profile-follow-details-container">
+            <span id="profile-followers"><span id="profile-user-followers">{{ profile_user.followers.all.count }}</span> followers</span>
+            <span id="profile-following"><span id="profile-user-following">{{ profile_user.following.all.count }}</span> following</span>
+        </div>
+    </div>
+
+    <hr class="divider">
+    
+{% endblock %}

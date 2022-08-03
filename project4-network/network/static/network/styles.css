@@ -1,0 +1,142 @@
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+.body {
+    padding: 20px;
+    max-width: 800px;
+    margin: auto;
+}
+
+/* divider */
+.divider {
+    margin-top: 20px;
+}
+
+/* creating posts */
+#hdr-new-post {
+    font-size: 1.6rem;
+}
+
+#post-form-container {
+    margin-top: 0;
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding: 20px;
+} 
+
+#btn-post {
+    margin-top: 5px;
+}
+
+/* post */
+#hdr-posts-container {
+    font-size: 1.6rem;
+    margin-top: 20px;
+}
+
+.post {
+    border: 1px solid gray;
+    border-radius: 5px; 
+    padding: 20px;
+    margin-top: 20px;
+    overflow: hidden;
+}
+
+.post-user {
+    font-weight: bold;  
+}
+
+.timestamp {
+    font-size: 0.8rem;
+    color: darkgray;
+}
+
+.post-content {
+    margin-top: 20px;
+}
+
+.btn-edit {
+    float: right;
+}
+
+.btn-save {
+    float: right;
+    margin-top: 5px;
+}
+
+.like-container {
+    margin-top: 20px;
+}
+
+.btn-like-toggle {
+    cursor: pointer;
+}
+
+.fa-heart {
+    color: red;
+}
+
+/* profile */
+#profile-details-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#profile-head {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.profile-username {
+    display: inline;
+    font-size: 2rem;
+}
+
+.btn-follow-toggle {
+    margin-left: 20px;
+}
+
+#profile-following {
+    margin-left: 30px;
+}
+
+#profile-follow-details-container {
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin: 30px 0;
+}
+
+.step-links {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.current {
+    margin: 0 20px;
+}
+
+/* Textarea */
+textarea {
+    border-radius: 5px;
+    width: 100%;
+    height: 120px;
+    resize: none;
+    padding: 5px;
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+
+label {
+    display: none;
+}

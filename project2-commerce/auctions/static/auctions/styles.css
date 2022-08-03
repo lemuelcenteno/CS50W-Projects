@@ -1,0 +1,80 @@
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    padding: 20px 30px;
+}
+
+.nav-item:first-child a {
+    padding-left: 0;
+}
+
+a.listing {
+    text-decoration: none;
+    color: black;
+}
+
+div.listing {
+    border: 1px solid gray;
+    border-radius: 10px;
+    margin: 20px 0;
+    padding: 30px;
+}
+
+div.listing:hover {
+    box-shadow: 0 0 2px 1px #4c8bf5;
+}
+
+.listing-title {
+    color: #BB0000;
+}
+
+img {
+    display: block;
+    max-width:200px;
+    max-height:100px;
+    height: auto;
+}
+
+ul {
+    padding-left: 0;
+}
+
+ul li {
+    list-style-position: inside;
+}
+
+.st-bid-txt {
+    font-size: 15px;
+}
+
+.error-text, .help-block {
+    color:  #c9252c;
+}
+
+.username-text {
+    font-weight: bold;
+    color: #4c8bf5;
+}
+
+.winner-text {
+    color: green;
+}
+
+div.comment {
+    border: 1px solid gray;
+    border-radius: 10px;
+    margin: 20px 0;
+    padding: 20px;
+}
+
+.comment-divider {
+    margin: 5px;
+}
+
+.date-text {
+    font-weight: bold;
+}

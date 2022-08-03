@@ -1,0 +1,42 @@
+{% extends "school/course_list_base.html" %}
+{% load static %}
+
+{% block script %}
+    <script src="{% static 'school/search.js' %}"></script>
+{% endblock %}
+
+{% block navbar_search %}
+    <form class="d-flex" action="{% url 'search' %}">
+        <input class="form-control me-2" type="search" name="q" placeholder="Search for Courses" aria-label="Search">
+        <button class="btn btn-outline-light" type="submit">Search</button>
+    </form>
+{% endblock %}
+
+{% block home_active %}active{% endblock %}
+
+{% block searchbar %}{% endblock %}
+
+{% block page_header %}
+        <h1 class="page-hdr">
+            Welcome,
+
+            {% if user.role == 'STU' %}
+            student
+            {% else %}
+            teacher 
+            {% endif %}
+
+            <span id="index-username">{{user.username}}</span>!
+        </h1>
+        <hr>
+
+        <div id="courses-hdr-div">
+            {% if user.role == 'STU' %}
+                <h2 class="courses-hdr">Courses You Enrolled In</h2>
+                <button onclick="location.href='{% url 'index' %}';" class="btn btn-primary">Add Course</button>
+            {% else %}
+                <h2 class="courses-hdr">Courses You Manage</h2>
+                <button onclick="location.href='{% url 'course-add' %}';" class="btn btn-primary">Create Course</button>
+            {% endif %}
+        </div>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "school/layout.html" %}
+{% load crispy_forms_tags %}
+
+{% block body %}
+    <div class="form-container form-register">
+        <h1 class="page-hdr">Create A Course</h1>
+        <hr>
+        <form action="{% url 'course-add' %}" method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button type="submit" class="btn btn-primary form-submit">Add Course</button>
+        </form>
+    </div>
+{% endblock %}

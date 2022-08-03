@@ -1,0 +1,54 @@
+{% extends "school/layout.html" %}
+{% load static %}
+
+{% block script %}
+    <script src="{% static 'school/search.js' %}"></script>
+{% endblock %}
+
+{% block body %}
+    {% block searchbar %}
+        <form id="form-search" class="searchbar" action="{% url 'search' %}">
+            <div class="input-group">
+                <input id="input-search" name="q"type="text" class="form-control"  placeholder="Search for Courses" aria-label="Search for Courses" aria-describedby="btn-search">
+                <button class="btn btn-outline-secondary" type="submit" id="btn-search">Search</button>
+            </div>
+        </form>
+    {% endblock %}
+
+    {% block page_header %}
+        <h1 class="page-hdr">All Courses</h2>
+        <hr>
+    {% endblock %}
+    
+    {% if courses %}
+
+        {% for course in page_obj %}
+            <div class="course">
+                <span class="course-title"><a href="{% url 'course-detail' course.code %}"><strong class="accent">{{ course.code }}</strong>: {{ course.title }}</a></span>
+            </div>
+        {% endfor %}
+
+        {% block pagination %}
+            {% if is_paginated %}
+                <div class="pagination">
+                    <span class="page-links">
+                        {% if page_obj.has_previous %}
+                            <a href="?page=1">&laquo; first</a>
+                            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+                        {% endif %}
+                        <span class="page-current">
+                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                        </span>
+                        {% if page_obj.has_next %}
+                            <a href="?page={{ page_obj.next_page_number }}">next</a>
+                            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                        {% endif %}
+                    </span>
+                </div>
+            {% endif %}
+        {% endblock %}
+    {% else %}
+        <div class="course">No courses found.</div>
+    {% endif %}
+    
+{% endblock %}

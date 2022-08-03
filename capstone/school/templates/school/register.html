@@ -1,0 +1,15 @@
+{% extends "school/layout.html" %}
+{% load crispy_forms_tags %}
+
+{% block body %}
+    <div class="form-container form-register">
+        <h1 class="page-hdr">Register</h1>
+        <hr>
+        <form action="{% url 'register' %}" method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button type="submit" class="btn btn-primary form-submit">Submit</button>
+        </form>
+        <small class="text-muted">Already a user? <a href={% url 'login' %}>Log in</a>.</small>
+    </div>
+{% endblock %}

@@ -1,0 +1,34 @@
+textarea {
+    min-height: 400px;
+}
+
+.email-listview {
+    padding: 15px;
+    border: 1px solid black;
+    cursor: pointer;
+}
+
+.listview-subject {
+    margin-left: 15px;
+}
+
+.listview-timestamp {
+    float: right;
+}
+
+.detail-label {
+    font-weight: bold;
+}
+
+#btn-toggle-archive {
+    margin-bottom: 10px;
+}
+
+#btn-reply {
+    margin-top: 10px;
+}
+
+.reply {
+    font-style: italic;
+    color: purple;
+}
